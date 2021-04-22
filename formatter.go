@@ -61,6 +61,7 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	// write time
 	b.WriteString(entry.Time.Format(timestampFormat))
+        b.WriteString(": ")
 
 	// write level
 	var level string
@@ -78,13 +79,13 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		fmt.Fprintf(b, "\x1b[%dm", levelColor)
 	}
 
-	b.WriteString(" [")
+//	b.WriteString(" [")
 	if f.ShowFullLevel {
 		b.WriteString(level)
 	} else {
 		b.WriteString(level[:4])
 	}
-	b.WriteString("]")
+//	b.WriteString("]")
 
 	if !f.NoFieldsSpace {
 		b.WriteString(" ")
