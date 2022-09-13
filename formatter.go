@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"regexp"
 
 	"github.com/sirupsen/logrus"
 )
@@ -110,11 +111,14 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		b.WriteString("\x1b[0m")
 	}
 
+	re := regexp.MustCompile(`0[x][0-9a-f]{60}([0-9a-f]{4})`)
+	out := re.ReplaceAllString(entry.Message, "redacted...$1")
+
 	// write message
 	if f.TrimMessages {
-		b.WriteString(strings.TrimSpace(entry.Message))
+		b.WriteString(strings.TrimSpace(out))
 	} else {
-		b.WriteString(entry.Message)
+		b.WriteString(out)
 	}
 
 	if !f.CallerFirst {
