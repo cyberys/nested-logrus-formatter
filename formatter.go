@@ -64,6 +64,14 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	b.WriteString(entry.Time.Format(timestampFormat))
         b.WriteString(": ")
 
+	var out string
+	if entry.Level.String() == "trace" {
+		re := regexp.MustCompile(`0[x][0-9a-f]{60}([0-9a-f]{4})`)
+		out = re.ReplaceAllString(entry.Message, "<REDACTED>...$1")
+	} else {
+		out = entry.Message
+	}
+
 	// write level
 	var level string
 	if f.NoUppercaseLevel {
@@ -111,8 +119,6 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		b.WriteString("\x1b[0m")
 	}
 
-	re := regexp.MustCompile(`0[x][0-9a-f]{60}([0-9a-f]{4})`)
-	out := re.ReplaceAllString(entry.Message, "redacted...$1")
 
 	// write message
 	if f.TrimMessages {
